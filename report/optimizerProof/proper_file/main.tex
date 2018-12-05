@@ -1,0 +1,62 @@
+\documentclass[12pt,twoside]{article}
+% \documentclass{article}
+% \date{}   %uncommenting this erases the date
+
+\usepackage[utf8]{inputenc}
+\usepackage{subfiles}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{natbib}
+\usepackage{verbatim}
+\usepackage{floatpag}
+\usepackage{subeqnarray}
+\usepackage{mathrsfs}    %for special characters
+\usepackage{cancel}  % to set terms in an equation to zero
+
+\usepackage{hyperref}
+
+\usepackage{amsthm}
+
+\setlength{\textheight}     {9.0in}
+\setlength{\textwidth}      {6.5in}
+\setlength{\oddsidemargin}  {0.0in}
+\setlength{\evensidemargin} {0.0in}
+\setlength{\topmargin}      {0.0in}
+\setlength{\headheight}     {0.0in}
+\setlength{\headsep}        {0.0in}
+\setlength{\hoffset}        {0.0in}
+\setlength{\voffset}        {0.0in}
+\setlength{\parindent}      {0.0in}      %starting new line at extreme left
+
+\graphicspath{{Figures/}}
+
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{thm}{Theorem}
+\newtheorem{prop}{Proposition}
+
+\usepackage{bbm}
+\usepackage{algorithmic}
+
+\begin{document}
+\title{Gradient Flow Optimizers}
+\author{Raghav K. Singhal}
+\maketitle
+
+\input{ode_ideas}
+
+\input{rk2_ralston_notStrong}
+
+\input{rk2_heun_notStrong}
+
+\input{rk2_heun_strongConvex}
+
+% \input{experiments}
+
+\input{notes}
+
+
+\end{document}

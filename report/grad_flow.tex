@@ -1,0 +1,70 @@
+%!TEX root = main.tex
+% \section{Gradient Flow}
+\section{Gradient Flow}
+Suppose $f$ is a $\beta$-smooth and $\alpha$-Strongly
+Convex function. Then gradient flow for $f$ is defined as
+\begin{align}\label{grad flow}
+\dot{x}(t) = - \nabla f(x(t)), \qquad x(0) = x_{0}
+\end{align}
+Now, as $f$ is $\beta$-smooth, we can guarantee that a
+solution exists and is unique, and as $f$ is $\alpha$-Strongly
+Convex, we can establish that all solutions converge to
+the same equilibrium point, $x^{*}$, this equilibrium
+point is the unique global minimum of $f$. \\
+\\
+Now, we list the two propositions that motivated our
+study of numerical integration schemes for the gradient
+flow equation.
+\begin{prop}
+  Let $x_{1}(t), x_{2}(t)$ be two solution trajectories
+  of the gradient flow equation \eqref{grad flow}, then
+  the following holds:
+\begin{align*}
+\norm{x_{1}(t) - x_{2}(t)}^{2} \leq e^{-2 \mu t} \norm{x_{1}(0) - x_{2}(0)}^{2}
+\end{align*}
+\end{prop}
+\begin{proof}
+Let $\mathcal{L}(t) = \norm{x_{1}(t) - x_{2}(t)}^{2}$, then note that
+\begin{align*}
+\frac{d}{dt}\mathcal{L}(t) &= 2 \langle x_{1}(t) - x_{2}(t), \dot{x_{1}}(t) - \dot{x_{2}}(t)  \rangle  \\
+&= 2 \langle x_{1}(t) - x_{2}(t), -\nabla f(x_{1}(t)) + \nabla f(x_{2}(t))  \rangle  \\
+& \leq - 2 \mu \mathcal{L}(t)
+\end{align*}
+which implies $\mathcal{L}(t) \leq e^{-2 \mu t} \mathcal{L}(0) = e^{-2 \mu t} \norm{x_{1}(0) - x_{2}(0)}^{2} $.
+\end{proof}
+This proposition states that any solution trajectory
+of the gradient flow equation \eqref{grad flow} will
+converge to the same point over time, and we show that
+this point is the global minimum of $f$.
+\begin{prop}
+  Let $f$ be $\beta$-smooth and $\alpha$-Strongly Convex
+  and $x^{*}$ is the global minimum of $f$, then the
+  solution trajectory of gradient flow \eqref{grad flow} satisfies:
+\begin{align*}
+f(x(t)) - f(x^{*}) \leq e^{-2 \mu t} \big( f(x(0)) - f(x^{*}) \big)
+\end{align*}
+\end{prop}
+\begin{proof}
+Note that
+\begin{align*}
+\frac{d}{dt} \big( f(x(t)) - f(x^{*}) \big) &= \langle \nabla f(x(t)), \dot{x(t)} \rangle \\
+&= - \norm{\nabla f(x(t))}^{2}
+\end{align*}
+Now, as $f$ is strongly convex,
+\begin{align*}
+f(x) - f(x^{*}) \leq \frac{1}{2 \mu} \norm{\nabla f(x)}^{2}
+\end{align*}
+which then implies
+\begin{align*}
+\frac{d}{dt} \big( f(x(t)) - f(x^{*}) \big) = -2 \mu \big( f(x(t)) - f(x^{*}) \big)
+\end{align*}
+Hence, $f(x(t)) - f(x^{*}) \leq e^{-2 \mu t} \big( f(x(0)) - f(x^{*}) \big)$.
+\end{proof}
+
+These two propositions motivated us to consider
+numerical integration techniques for the gradient flow equation.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

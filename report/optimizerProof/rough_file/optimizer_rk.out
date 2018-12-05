@@ -1,0 +1,10 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{ODE Ideas - Lyupanov Function}{}% 2
+\BOOKMARK [1][-]{section.3}{RK2 - Ralston Method}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Proof 1}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Order of Convergence}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{RK2 - Heun's Method}{}% 6
+\BOOKMARK [2][-]{subsection.4.1}{Proof 1}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.2}{Order Of Convergence}{section.4}% 8
+\BOOKMARK [1][-]{section.5}{Notes}{}% 9
+\BOOKMARK [2][-]{subsection.5.1}{Comparison to GD}{section.5}% 10

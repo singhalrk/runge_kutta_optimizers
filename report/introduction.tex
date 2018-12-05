@@ -1,0 +1,62 @@
+%!TEX root = main.tex
+
+\section{Introduction}
+Gradient Descent or Steepest Descent Flows, is a
+well studied topic in Partial Differential Equations
+and Differential Geometry. Given a convex functional $f$ on a
+space $X$, suppose we wish to minimize $f$, then one way
+to find points $x^*$ such that $\nabla f(x^*) = 0$.
+Now, finding such points in directly is not feasible, hence
+we look for the shortest possible path from $x_0$ to $x^*$,
+which is provided by the equation $\dot{x}(t) = - \nabla f(x(t))$,
+with $x(0)=x_0$. This is fairly simple to work out in a
+finite-dimensional Hilbert Space but can also be implemented
+in Infinite-dimensional Space. For instance, the heat equation
+can be seen as gradient flow in the Hilbert Space
+$L_2(\mathbb{R}^{n})$, $u_t = \frac{\partial}{\partial u} f(u)$,
+where $f(u) = \frac{1}{2} \int |\nabla u|^{2} $.
+\\
+\\
+Now, Gradient Flow is widely used as a continuous
+approximation of the Gradient Descent Method. The
+analogy can be made formal by noticing that Gradient
+Descent is Euler's Method to numerically solve Gradient Descent.
+\\
+\\
+These two fields have different goals, in Optimization
+the goal is to seek the minimizer of a function or in
+other words, it focuses on the infinite time horizon.
+In numerical analysis, the focus is on finite-time
+horizon, $[0, T_{\max}]$ and to maintain consistency
+and not accumulate too much error.
+\\
+\\
+This connection was also established by Scieur et al
+in \cite{integration}, where they show that accelerated
+methods are instances of multi-step methods which
+integrate the Gradient Flow Equation. The idea of using
+differential equations to model optimization methods
+has gained prominence lately, recently \cite{su} used a
+second-order differential equation to model Nesterov's
+Accelerated Gradient Descent. This approach however works
+backwards, that is it uses the optimization scheme to
+obtain a second order differential equation in the limit,
+\cite{integration} however analyze Nesterov's Accelerated
+Gradient Descent as a linear multi-step scheme.
+\\
+\\
+Gradient Flow is the bridge between numerical integration
+and optimization, and in \cite{integration} they used
+concepts from numerical integration to show convergence
+and other properties of optimization schemes. They particularly
+use linear multi-step methods but in this work, we use
+intermediate step methods to integrate the gradient flow
+equation. The most famous family of intermediate step
+methods, or half-step methods as they are commonly known,
+is the Runge-Kutta Family. Here we show the performace of
+half-step methods as optimization schemes.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

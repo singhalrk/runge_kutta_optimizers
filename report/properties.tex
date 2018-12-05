@@ -1,0 +1,38 @@
+%!TEX root = main.tex
+
+
+
+\subsubsection*{Quadratic}
+The reason we focus on Runge-Kutta methods is that they perform better when dealing with stiff equations. For instance, let $f : \mathbb{R}^{d} \rightarrow \mathbb{R}$ be defined as
+\begin{align*}
+f(x) = \frac{1}{2} x^{T}H x  %+ c^{T}x
+\end{align*}
+where $H$ is positive definite, then note that $\nabla f(x) = Hx$, then gradient descent would yield
+\begin{align*}
+x_{k + 1} &= x_{k} - \eta H x_{k} = (I - \eta H) x_{k} \\
+&= (I - \eta H)^{k} x_{0} \\
+&= U (I - \eta \Lambda)^{k} U^{T} x_{0}
+\end{align*}
+and RK4 would yield
+\begin{align*}
+x_{k + 1} &= x_{k} - \frac{\eta}{6} \bigg( k_1 + 2 k_2 + 2 k_3 + k_4 \bigg) \\
+&= x_k -  \frac{\eta}{6} \bigg( H x_k + 2 H (x_k - \frac{\eta}{2} H x_k ) \\
+& \qquad \qquad + 2 H(x_k - \frac{\eta}{2} H (x_k - \frac{\eta}{2} H x_k )) + H(x_k - \eta H(x_k - \frac{\eta}{2} H (x_k - \frac{\eta}{2} H x_k )) ) \bigg) \\
+&= x_k - \frac{\eta}{6} \bigg( 6 H x_k - 3 \eta H^{2} x_k + \frac{3 \eta^{2}}{4}H^{3}x_k - \frac{\eta^{3}}{4}H^{4} x_k  \bigg) \\
+&= \bigg( I - \frac{\eta}{6} \big( 6 H - 3 \eta H^{2} + \frac{3 \eta^{2}}{4}H^{3} - \frac{\eta^{3}}{4}H^{4} \big) \bigg) x_k \\
+&= U \bigg( I - \eta \Lambda +  \frac{\eta^{2}}{2} \Lambda^{2} - \frac{3 \eta^{3}}{8} \Lambda^{3} + \frac{\eta^{4}}{24} \Lambda^{4} \bigg) U^{T} x_k
+\end{align*}
+Now, if you note that $\eta=\frac{2}{\Lambda_{max}}$ then RK4 converges faster than Gradient Descent, but we also note that RK4 is also a corrective method and integrates much more accurately than Euler's Method.
+
+
+
+
+
+
+
+
+
+
+
+
+

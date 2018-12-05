@@ -1,0 +1,101 @@
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
+
+\section{Integration Schemes}
+Schur et al \cite{integration} show that acceleration
+techniques like Nesterov's accelerated gradient descent
+can be seen as particular instances of multi-step methods,
+popular techniques for numerical integration. Suppose we
+wish to solve \eqref{grad flow} over the interval $[0, T]$,
+then we discretize the solution trajectory as
+$ \{ x_{1}, \dots x_{K} \} \sim \{ x(t_{1}), \dots, x(t_{k}) \} $,
+where $t_0 = 0$ and $t_{k} = t_{k - 1} + \eta$ and $\eta$ is
+the step size. This step size is called the learning rate in
+the optimization community, and we choose it such that
+$x_k \sim x(t_{k})$. Now, linear multi-step schemes are defined
+as those methods which use the previous points and the derivative
+values at the previous point to construct a new solution, more
+precisely a linear $s$-step method is defined as follows:
+\begin{align*}
+  x_{k + s} = \sum_{i = 0}^{s - 1} a_{i} x_{k + i} +
+  \eta \sum_{i = 0}^{s} b_{i} g(x_{k + i})
+\end{align*}
+where we are solving the equation $\dot{x}(t) = g(x(t))$.
+If $b_{s} \neq 0$ then the above method becomes an implicit
+method and if $b_{s} = 0$, then it is known as an explicit
+method. A lot of current optimization schemes and acceleration
+schemes rely on this technique. These techniques were invented
+in order to tackle several issues like stiffness,
+stability, error control, etc.
+\\
+\\
+The focus of this work is analyzing the Runge-Kutta family,
+which is a family of intermediate-step methods, that is to
+get to point $x_{k + 1}$ from $x_{k}$, they use points
+which are not part of the solution trajectory we finally
+obtain. More formally, an $s$-step Runge Method is defined as
+\begin{align*}
+x_{k + 1} &= x_{k} + \eta \sum_{i = 1}^{s} c_{i} k_{i}, \quad \text{where} \\
+k_{1} &= g(x_{k}) \\
+k_{2} &= g(x_{k} + \eta a_{2, 1}k_{1}) \\
+k_{s} &= g(x_{k} + \eta \sum_{i=1}^{s} a_{s, i} k_{i})
+\end{align*}
+Now, Runge-Kutta methods have to satisfy
+$\sum_{j=1}^{i-1}a_{i, j} = c_{i}$ for all $i = 2, \dots, s$.
+These requirements are imposed so that the method has an
+error of order $p$, that is the local truncation error is
+$\mathcal{O}(\eta^{p + 1})$ and a global error of
+$\mathcal{O}(\eta^{p})$. The local truncation error,
+$\epsilon(x_k)$, is defined as
+\begin{align*}
+\epsilon(x_k) = x_k - x(t_k)
+\end{align*}
+assuming the previous solutions $x_1, \dots, x_{k - 1}$
+were exact so that $x_{k - 1} = x(t_{k - 1})$.
+\\
+\\
+The main motivation behind explicit Runge-Kutta
+methods is to use a quadrature scheme for the following problem:
+\begin{align*}
+x(t_{k + 1}) &= x(t_{k}) + \int_{t_k}^{t_{k + 1}} g(x(s)) ds \\
+&= x(t_{k}) + \eta \int_{0}^{1}g(x(t_{k} + \eta s) ds, \quad \text{ which can be approximated as} \\
+x_{k + 1} &= x_k + \eta \sum_{i = 1}^{s} b_{i} g(x_{k} + \eta c_{i})
+\end{align*}
+Now, as we don't have access to the intermediate
+points $x(t_{k} + \eta c_i)$, we approximate by
+using $x(t_k) + \eta c_i k_i$, where $k_i$ is defined above.
+\\
+\\
+Below, we analyze two popular $2$nd-order Runge-Kutta
+Method, RK2 Heun's Method,  and Ralston's Method. But
+first we show a preliminary analysis on a quadratic problem
+%!TEX root = main.tex
+
+
+
+\subsubsection*{Quadratic}
+The reason we focus on Runge-Kutta methods is that they perform better when dealing with stiff equations. For instance, let $f : \mathbb{R}^{d} \rightarrow \mathbb{R}$ be defined as
+\begin{align*}
+f(x) = \frac{1}{2} x^{T}H x  %+ c^{T}x
+\end{align*}
+where $H$ is positive definite, then note that $\nabla f(x) = Hx$, then gradient descent would yield
+\begin{align*}
+x_{k + 1} &= x_{k} - \eta H x_{k} = (I - \eta H) x_{k} \\
+&= (I - \eta H)^{k} x_{0} \\
+&= U (I - \eta \Lambda)^{k} U^{T} x_{0}
+\end{align*}
+and RK4 would yield
+\begin{align*}
+x_{k + 1} &= x_{k} - \frac{\eta}{6} \bigg( k_1 + 2 k_2 + 2 k_3 + k_4 \bigg) \\
+&= x_k -  \frac{\eta}{6} \bigg( H x_k + 2 H (x_k - \frac{\eta}{2} H x_k ) \\
+& \qquad \qquad + 2 H(x_k - \frac{\eta}{2} H (x_k - \frac{\eta}{2} H x_k )) + H(x_k - \eta H(x_k - \frac{\eta}{2} H (x_k - \frac{\eta}{2} H x_k )) ) \bigg) \\
+&= x_k - \frac{\eta}{6} \bigg( 6 H x_k - 3 \eta H^{2} x_k + \frac{3 \eta^{2}}{4}H^{3}x_k - \frac{\eta^{3}}{4}H^{4} x_k  \bigg) \\
+&= \bigg( I - \frac{\eta}{6} \big( 6 H - 3 \eta H^{2} + \frac{3 \eta^{2}}{4}H^{3} - \frac{\eta^{3}}{4}H^{4} \big) \bigg) x_k \\
+&= U \bigg( I - \eta \Lambda +  \frac{\eta^{2}}{2} \Lambda^{2} - \frac{3 \eta^{3}}{8} \Lambda^{3} + \frac{\eta^{4}}{24} \Lambda^{4} \bigg) U^{T} x_k
+\end{align*}
+Now,  note that when $\eta=\frac{1}{\Lambda_{max}}$ then RK4 converges faster than Gradient Descent, but we also note that RK4 is also a corrective method and integrates much more accurately than Euler's Method.
+\\
+\\
+In this work, however we only focus on $2$-nd order methods due to computational issues and in consideration of time.

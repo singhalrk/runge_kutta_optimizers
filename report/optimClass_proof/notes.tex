@@ -1,0 +1,27 @@
+%!TEX root=./optim_report.tex
+\subsection{Inequalities}
+Here we present some common inequalities in convex analysis without proof, for proof refer to \cite{nesterov}
+\begin{lemma}
+Let $f : \mathbb{R}^d \rightarrow \mathbb{R}$  be convex and satisfy $|| \nabla f(x) - \nabla f(y) || \leq \beta || x -y ||$ for all $x,y \in \mathbb{R}^d$ . Then $\forall x,y \in \mathbb{R}^d$ the following are true:
+\begin{align}
+% 0 \leq f(x) - f(y) - \nabla f(y)^T (x-y) \leq \frac{\beta}{2} || x-y ||^2 \\
+f(x) - f(y) \leq \nabla f(x)^T (x-y) - \frac{1}{2 \beta} || \nabla f(x) - \nabla f(y) ||^2 \\
+\frac{1}{\beta} || \nabla f(x) - \nabla f(y) ||^2  \leq( \nabla f(x) - \nabla f(y))^T(x-y)
+\end{align}
+\end{lemma}
+Now, for the class of Strongly Convex functions $\mathcal{S}_{\beta,\mu}^{k,p}(\mathbb{R}^n)$ we use the following inequalities:
+
+\begin{equation}
+\begin{aligned}
+\left\langle \nabla f(x) -\nabla f(y), x-y \right\rangle \geq 0 \\
+ 0 \leq f(y) - f(x) -\nabla f(x)^T (y-x) \leq \frac{\beta}{2}||x-y||_2^2 \\
+f(x) + \nabla f(x)^T (y-x) + \frac{1}{2\beta}||\nabla f(x)-\nabla f(y)||_2^2 \leq f(y) \\
+\frac{1}{\beta}|| \nabla f(x)-\nabla f(y) ||_2^2 \leq(\nabla f(x)-\nabla f(y))^T(x-y) \leq \beta || x -y ||_2^2  \\
+f(y) \geq f(x) + \nabla f(x)^T (y-x) + \frac{1}{2\mu}||y-x||_2^2
+\end{aligned}
+\end{equation}
+Note, that $f(x) \geq f(x^*) + \frac{1}{2\mu}||x-x^*||_2^2 $
+% \subsection{RK2-Heun}
+
+
+% \subsection{Comparison to GD}

@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Motivation}{}% 2
+\BOOKMARK [1][-]{section.3}{Methods}{}% 3
+\BOOKMARK [1][-]{section.4}{RK2 - Ralston Method}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Main Results}{section.4}% 5
+\BOOKMARK [1][-]{section.5}{RK2 - Heun's Method}{}% 6
+\BOOKMARK [2][-]{subsection.5.1}{Main Results}{section.5}% 7
+\BOOKMARK [1][-]{section.6}{Experiments}{}% 8
+\BOOKMARK [2][-]{subsection.6.1}{Deep Learning}{section.6}% 9
+\BOOKMARK [2][-]{subsection.6.2}{Convex Models}{section.6}% 10
+\BOOKMARK [1][-]{section.7}{Conclusion and Further Work}{}% 11
+\BOOKMARK [2][-]{subsection.7.1}{RK2 Heun Proof}{section.7}% 12
+\BOOKMARK [2][-]{subsection.7.2}{Order Of Convergence}{section.7}% 13
+\BOOKMARK [2][-]{subsection.7.3}{Inequalities}{section.7}% 14

@@ -1,0 +1,83 @@
+%!TEX root=./optim_report.tex
+\section{Strongly Convex Function}
+
+\subsection{Proof 1}
+\begin{thm}
+ Let $f \in \mathcal{S}_{\beta}^{1,1}(\mathbb{R}^n)$ and $\alpha \in (0,\frac{2}{\beta})$, then RK2-Ralston updates satisfy the following convergence result:
+ \begin{equation}
+ \begin{aligned}
+ f(x_k) - f(x^*) \leq F(\|x_0 - x^*\|^2)
+ \end{aligned}
+ \end{equation}
+\end{thm}
+
+\begin{proof}
+ Let $r_k = \|x_k - x^* \|$, then define $\Delta x_k = \frac{1}{2} \alpha (k_1 + k_2)$:
+
+ \begin{equation}
+ \begin{aligned} \label{heunStrIneq1}
+r_{k+1}^2 &= \| x_k - x^* -  \Delta x_k\|^2 \\
+ &= r_k^2  + \|\Delta x_k\|^2 - 2 \Delta x_k^T (x_k - x^*) \\
+ &= r_k^2 + \Delta x_k^T \Delta x - \alpha k_1^T(x_k - x^*) - \alpha k_2^T(x_k - x^*)  \\
+ &= r_k^2 + \frac{\alpha^2}{4}(k_1 + k_2)^T (k_1 + k_2) - \alpha k_1^T(x_k - x^*) - \alpha k_2^T(x_k - x^*) \\
+ &= r_k^2 + \frac{\alpha^2}{4}(\|k_1\|^2 + \|k_2\|^2 + 2k_1^T k_2) - \alpha k_1^T(x_k - x^*) - \alpha k_2^T(x_k - x^*) \\
+ &= r_k^2 + \frac{\alpha^2}{4}(\|k_1\|^2 + \|k_2\|^2 + 2k_1^T k_2) - \alpha k_1^T (x_k - x^*) - \alpha k_2^T (x_k - \alpha k_1 - x^*) - \alpha^2 k_2^T k_1 \\
+ &= r_k^2 + \frac{\alpha^2}{4}(\|k_1\|^2 + \|k_2\|^2 - 2k_1^T k_2) - \alpha k_1^T (x_k - x^*) - \alpha k_2^T (x_k - \alpha k_1 - x^*)
+ \end{aligned}
+ \end{equation}
+ where $k_1 = \nabla f(x_k)$ and $k_2 = \nabla f(x_k - \alpha \nabla f(x_k))$, now note that $\nabla f(x^*)=0$, then for all $x,y \in \mathbb{R}^n$
+ \begin{equation}
+ \begin{aligned} \label{heunStrIneq2}
+ \frac{1}{\beta}\| \nabla f(x) - f(y)\|^2 \leq ( \nabla f(x) - f(y))^T(x-y) \\
+ \implies - \nabla f(x_k)^T (x_k - x^*) \leq - \frac{1}{\beta}\|\nabla f(x_k)\|^2
+ \end{aligned}
+ \end{equation}
+ Now, using \eqref{heunStrIneq1} and \eqref{heunStrIneq2}, we get that
+
+\begin{equation}
+\begin{aligned}
+r_{k+1}^2 &= r_k^2 + \frac{\alpha^2}{4}(\|k_1\|^2 + \|k_2\|^2 - 2k_1^T k_2) - \alpha k_1^T (x_k - x^*) - \alpha k_2^T (x_k - \alpha k_1 - x^*) \\
+&\leq r_k^2 + \frac{\alpha^2}{4}(\| k_1\|^2 + k_2 \|^2) - \frac{\alpha}{\beta}(\|k_1\|^2 + \|k_2\|^2) - \frac{\alpha^2}{4}k_2^T k_1 \\
+% &\textbf{verify that } 0 \leq \frac{\alpha^2}{4}k_2^T k_1  \\
+&\leq r_k^2 - \alpha \big(\frac{1}{\beta} - \frac{\alpha}{4}\big) \big( \|k_1\|^2 + \|k_2\|^2 \big)
+\end{aligned}
+\end{equation}
+Now, note that $f(y) \leq f(x) + \nabla f(x)^T(y-x) + \frac{\beta}{2}\|x-y\|^2$, which implies that:
+\begin{equation}
+\begin{aligned}
+f(x_{k+1}) &\leq f(x_k) + \nabla f(x_k)^T (x_{k+1} - x_k) + \frac{\beta}{2}\|x_{k+1} - x_k \|^2 \\
+&= f(x_k) - \nabla f(x_k)^T \Delta x_k + \frac{\beta}{2}\| \Delta x_k \|^2 \\
+&= f(x_k) - \frac{\alpha}{2}\nabla f(x_k)^T (k_1 + k_2) + \frac{\beta}{2}\Delta x_k^T \Delta x_k \\
+&= f(x_k) - \frac{\alpha}{2}k_1^T(k_1 + k_2) + \frac{\beta \alpha^2}{8}(k_1 + k_2)^T(k_1 + k_2) \\
+& \leq  f(x_k) - \frac{\alpha}{2}(\|k_1\|^2 + k_1^T k_2) + \frac{\beta \alpha^2}{8}(\|k_1\|^2 + \|k_2\|^2) \\
+&= f(x_k) - \alpha \big(\frac{\alpha}{2} - \frac{\beta \alpha}{8}\big)\|k_1\|^2 + \frac{\beta \alpha^2}{8}\|k_2\|^2 - \frac{\alpha^2}{2} k_1^T k_2
+\end{aligned}
+\end{equation}
+Note that $k_2 = \nabla f(x - \alpha \nabla f(x)) = \nabla f(x) - \alpha \nabla^2 f(x) \nabla f(x) + \mathcal{O}(|\alpha|^2)$, note that
+\begin{equation}
+\begin{aligned}
+k_2^T k_2 &= k_2^T(k_1 - \alpha \nabla^2 f(x) k_1) \\
+&= k_2^T k_1 - \alpha k_2^T \nabla^2 f(x) k_1 \\
+& \textbf{change - taylor series and convexity} \\
+&= k_2^T k_1 - \alpha k_1^T \nabla^2 f(x) k_1 + \alpha^2 \|\nabla^2 f(x) k_1\|^2 \\
+& \leq k_2^T k_1 + \beta \alpha^2 \|k_1\|^2 \\
+\implies & \|k_2\|^2 - \beta \alpha^2 \|k_1\|^2 \leq k_2^T k_1
+\end{aligned}
+\end{equation}
+
+which implies that $ - k_2^T k_1 \leq \beta \alpha^2 \|k_1\|^2 - \|k_2\|^2$, hence
+\begin{equation}
+\begin{aligned}
+f(x_{k+1}) & \leq f(x_k) - \alpha \big(\frac{\alpha}{2} - \frac{\beta \alpha}{8}\big)\|k_1\|^2 + \frac{\beta \alpha^2}{8}\|k_2\|^2 - \frac{\alpha^2}{2} k_1^T k_2 \\
+& \leq f(x_k) - \alpha \big(\frac{\alpha}{2} - \frac{\beta \alpha}{8}\big)\|k_1\|^2 + \frac{\beta \alpha^2}{8}\|k_2\|^2 - \frac{\alpha^2}{2} \big( \beta \alpha^2 \|k_1\|^2 - \|k_2\|^2 \big) \\
+& \leq
+\end{aligned}
+\end{equation}
+
+
+
+
+
+
+
+\end{proof}

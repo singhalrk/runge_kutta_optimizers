@@ -1,0 +1,48 @@
+%!TEX root=./main.tex
+\section{Introduction}
+In this paper we present a new optimization method, which is based on the idea that Gradient Descent is a Euler Approximation to the solution of the following Ordinary Differential Equation:
+\begin{equation}\label{gradFlow}
+\dot{x}_t = -\nabla_{x}f(x_t)
+\end{equation}
+The Euler Approximation to this Ordinary Differential Equation is of the following form:
+\begin{align*}
+x_{n+1} =  x_n - \alpha \nabla_{x}f(x_n)
+\end{align*}
+where $\alpha$ is the step-size which is the learning rate for optimization.
+\\
+\\
+$\textbf{Look up Literature for continuous gradient descent}$
+\\
+\\
+
+
+We explore the idea that the solution trajectory for \eqref{gradFlow}, which also has the critical points of the loss function $L(\theta)$ as its $\omega$-limit point.
+
+\section{ODE Ideas - Lyupanov Function}
+Here we provdide certain properties of the solution of \eqref{gradFlow}, when $f \in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, that is $f$ is strongly convex and twice differentiable with $|| \nabla f(x) - \nabla f(y) || \leq \beta ||x - y||$, for all $x,y \in \mathbb{R}^n$.
+\begin{equation}
+\begin{aligned}
+\frac{d}{dt}\big(f(x_t) - f(x^*) \big) &= \left\langle \nabla f(x_t), \dot{x}_t \right\rangle \\
+& = - ||\nabla f(x_t)||_2^2
+\end{aligned}
+\end{equation}
+Now, note that $|| \nabla f(x) || \leq \beta || x - x^* ||$, which implies that
+\begin{equation}
+\begin{aligned}
+- \beta^2 || x_t - x^* || \leq -||\nabla f(x_t)||_2^2 = \frac{d}{dt}\big(f(x_t) -f(x^*)\big) \\
+\frac{d}{dt} \big(f(x_t) - f(x^*) \big) \geq \beta || x_t - x^* ||_2^2
+\end{aligned}
+\end{equation}
+But, as $f(x_t)\in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, we have that:
+\begin{equation}
+\begin{aligned}
+f(x) - f(x^*) \leq \frac{1}{2\mu}|| \nabla f(x)||_2^2
+\end{aligned}
+\end{equation}
+Hence,
+\begin{equation}
+\begin{aligned}
+& \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \leq -2\mu \big(f(x_t) - f(x^*)\big) \\
+\implies & \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \leq e^{-2\mu t}(f(x_0) - f(x^*))
+\end{aligned}
+\end{equation}

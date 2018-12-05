@@ -1,0 +1,14 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Gradient Flow}{}% 2
+\BOOKMARK [1][-]{section.3}{Integration Schemes}{}% 3
+\BOOKMARK [1][-]{section.4}{RK2 Ralston}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Strongly Convex}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Convex}{section.4}% 6
+\BOOKMARK [1][-]{section.5}{RK2 Heun}{}% 7
+\BOOKMARK [2][-]{subsection.5.1}{Strongly Convex}{section.5}% 8
+\BOOKMARK [2][-]{subsection.5.2}{Convex}{section.5}% 9
+\BOOKMARK [1][-]{section.6}{Optimization in Deep Leanrning}{}% 10
+\BOOKMARK [1][-]{section.7}{Experiments}{}% 11
+\BOOKMARK [2][-]{subsection.7.1}{Convex Models}{section.7}% 12
+\BOOKMARK [2][-]{subsection.7.2}{Deep Learning}{section.7}% 13
+\BOOKMARK [1][-]{section.8}{Conclusion}{}% 14

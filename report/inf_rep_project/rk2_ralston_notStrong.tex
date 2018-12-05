@@ -1,0 +1,30 @@
+%!TEX root=./optim_report.tex
+\section{RK2 - Ralston Method}
+
+Here we present the first Runge-Kutta Method, a $2nd$ order method also known as RK2-Ralston, which we refer to as RK2 in the experiments.
+
+\begin{algorithmic}
+\STATE Given $x_0$
+\FOR {$t $ in $[0,T]$ do}
+  \STATE $k_1 \gets \nabla f(x_t)$
+  \STATE $k_2 \gets \nabla f(x_t - \frac{2\alpha}{3} k_1) $
+  \STATE $x_{t+1} \gets x_n - \frac{\alpha}{4}(k_1 + 3 k_2)$
+\ENDFOR
+\end{algorithmic}
+
+\subsection{Main Results}
+\begin{thm} Let $f(x) \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}( \mathbb{R}^n)$ and $f$ is bounded below, then the RK2-Ralston Method gap between $x_t$ and some local minima $x^*$ is given by, where $\alpha = \frac{2}{\beta}$ :
+\begin{align*}
+f(x_t) - f(x^*) \leq \frac{4}{3 \beta} \frac{ || x_1 - x^* ||_2^2}{t-1}
+\end{align*}
+\end{thm}
+
+To prove the above proposition we need the following lemma, where we show the amount of progress made by our integration scheme in $1$ step.
+\begin{lemma}
+Let $f : \mathbb{R}^d \rightarrow \mathbb{R} \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}(\mathbb{R}^n)$ and $f$ be bounded below. Let $\Delta x =  \frac{1}{2\beta}(k_1 + 3k_2)$, then  we show that,
+\begin{align}
+f(x - \Delta x ) - f(x) \leq - \frac{3}{4 \beta} || \nabla f(x) ||^2
+\end{align}
+\end{lemma}
+
+\input{proof_rk2_ralston}

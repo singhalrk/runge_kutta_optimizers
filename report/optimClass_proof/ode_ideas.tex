@@ -1,0 +1,78 @@
+%!TEX root=./optim_report.tex
+\section{Introduction}
+In this paper we present a new optimization method, which is based on the idea that Gradient Descent is a Euler Approximation to the solution of the following Ordinary Differential Equation:
+\begin{equation}\label{gradFlow}
+\dot{x}_t = -\nabla_{x}f(x_t)
+\end{equation}
+The Euler Approximation to this Ordinary Differential Equation is of the following form:
+\begin{align*}
+x_{n+1} =  x_n - \alpha \nabla_{x}f(x_n)
+\end{align*}
+where $\alpha$ is the step-size and in the Optimization Literature is referred to as the Learning Rate. In recent years there has been some interest in analyzing Optimzation Schemes using Differential Equation \cite{su2014}, etc.
+\\
+\\
+Note \cite{su2014} uses a second-order differential equation to analyze Nesterov's Accelerated Gradient Descent, but it reverse-engineers a Differential Equation to analyze a particular method. We take the forward approach of first motivating the Ordinary Differential Equation point of view and then deriving optimization schemes, an approach already taken by \cite{alex2017}, where they analyze linear-multistep methods and other methods for integration of Differential Equations and analyze their performance as Optimization Schemes. We look at a very famous and stable class of optimizers, Runge-Kutta Methods, and compare their performance with Gradient Descent, AdaGrad, Stochastic Gradient Descent, SGD with momentum and Accelerated Stochastic Gradient Descent.
+\\
+\\
+However, the goal in each field is different, in Optimization we look at an infinite-time horizon to find an approximation close to a global or a local minima but in Numerical Analysis of Differential Equations, the goal is to find a close approximation to the solution of the Differential Equation over a finite time interval $[0, T]$. But we try to bridge this gap by saying that the the solution trajectory for \eqref{gradFlow} stays close if not converges to the critical points of $f$, and we formalize this view by noting that the critical points of the loss function $f(x)$ are also the $\omega$-limit points of the \eqref{gradFlow}.
+\\
+\\
+\section{Motivation}
+Here we provdide certain properties of the solution of \eqref{gradFlow}, when $f \in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, that is $f$ is strongly convex and twice differentiable with $|| \nabla f(x) - \nabla f(y) || \leq \beta ||x - y||$, for all $x,y \in \mathbb{R}^n$ and $f$ is $\mu$-strongly convex. Then note that $\forall t >0$:
+\begin{equation}
+\begin{aligned}
+\frac{d}{dt}\big(f(x_t) - f(x^*) \big) &= \left\langle \nabla f(x_t), \dot{x}_t \right\rangle \\
+& = - ||\nabla f(x_t)||_2^2
+\end{aligned}
+\end{equation}
+% Now, note that $|| \nabla f(x) || \leq \beta || x - x^* ||$, which implies that
+% \begin{equation}
+% \begin{aligned}
+% - \beta^2 || x_t - x^* || \leq -||\nabla f(x_t)||_2^2 = \frac{d}{dt}\big(f(x_t) -f(x^*)\big) \\
+% \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \geq \beta || x_t - x^* ||_2^2
+% \end{aligned}
+% \end{equation}
+But, as $f(x_t)\in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, we have that:
+\begin{equation}
+\begin{aligned}
+f(x) - f(x^*) \leq \frac{1}{2\mu}|| \nabla f(x)||_2^2
+\end{aligned}
+\end{equation}
+Hence,
+\begin{equation}
+\begin{aligned}
+& \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \leq -2\mu \big(f(x_t) - f(x^*)\big) \\
+\implies &  \big(f(x_t) - f(x^*) \big) \leq e^{-2\mu t}(f(x_0) - f(x^*))
+\end{aligned}
+\end{equation}
+
+Hence, $\forall \epsilon >0$, there exist $t>0$, such that $f(x_t) - f(x^*) \leq \epsilon$. And note that if we start with $2$ different initial conditions, $x_0^1$ and $x_0^2$, they too converge to the same value. More precisely, let $\mathcal{L}(t)= \| x_1 (t) - x_2 (t) \|^2$, then note that:
+\begin{equation}
+\begin{aligned}
+\frac{d}{dt}\mathcal{L}(t) &= 2 (x_1(t) - x_2(t))^T (\dot{x_1}(t) - \dot{x_2}(t)) \\
+&= 2 (x_1(t) - x_2(t))^T (-\nabla f(x_1(t)) + \nabla f(x_2(t))) \\
+& = - 2 (x_1(t) - x_2(t))^T (\nabla f(x_1(t)) - \nabla f(x_2(t))) \\
+& \leq - 2 \mu \| x_1(t) - x_2(t) \|^2 \\
+&= -2 \mu \mathcal{L}(t)
+\end{aligned}
+\end{equation}
+As we show below, $\mathcal{L}(t)$ is decreasing so we have that:
+\begin{equation}
+\begin{aligned}
+\frac{d}{dt}\mathcal{L}(t) \leq - 2 \mu \mathcal{L}(0)
+\end{aligned}
+\end{equation}
+which implies that $\mathcal{L}(t) \leq e^{-2 \mu t} \| x_1(0) - x_2(0) \|^2$. Giving us the following result that
+\begin{prop}
+Let $f \in \mathcal{S}_{\mu, \beta}^{2,1}$. Let $x^*$ be the global minimum of $f$, then the solution of $\dot{x}_t = -\nabla f(x_t)$ satisfies:
+\begin{align*}
+f(x_t) - f(x^*) &\leq e^{-2 \mu t} \big( f(x_0) - f(x^*) \big) \\
+\| x_t - x^* \| &\leq e^{-2 \mu t} \| x_0 - x^* \|^2
+\end{align*}
+\end{prop}
+
+This leads to the question, whether higher order integration methods for Ordinary Differential Equation might lead to better optimization schemes. The Euler scheme for integration of O.D.E.'s can be derived by a simple Taylor Series formula,
+\begin{align*}
+x_{t+ \Delta t} = x_t - \Delta t \nabla f(x_{t}) + \mathcal{O}(\Delta t^2)
+\end{align*}
+There are some other phenomenon that we can study and connect with Optimization, mainly stability of Solutions and Stiffness, which we do not delve into in this report. For reference to these ideas, please look at \cite{alex2017}.

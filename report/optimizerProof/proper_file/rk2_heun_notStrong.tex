@@ -1,0 +1,105 @@
+%!TEX root=./main.tex
+\section{RK2 - Heun's Method}
+Heun's Method is a second order method to solving $\dot{x_t} = - \nabla f(x_t)$, and its updates are given as follows:
+\begin{algorithmic}
+\STATE Change this
+\FOR {$t $ in $[0,T]$ do}
+  \STATE $k_1 \gets \nabla f(x_t)$
+  \STATE $k_2 \gets \nabla f(x_t - \alpha k_1) $
+  \STATE $x_{t+1} \gets x_n - \frac{\alpha}{2}(k_1 + k_2)$
+\ENDFOR
+\end{algorithmic}
+\subsection{Proof 1}
+----------- \\
+\textbf{TAKE $\alpha = \frac{2}{\beta}$} \\
+-----------\\
+Note that using a Taylor Series approximation, we get that:
+\begin{equation} \label{heunIneq1}
+\begin{aligned}
+\nabla f(x -  \frac{1}{\beta}\nabla f(x)) &= \nabla f(x) - \frac{1}{\beta}\nabla^2 f(x) \nabla f(x) + \mathcal{O}(|c|^2) \\
+& \implies  \nabla f(x) - \nabla f(x-\frac{1}{\beta}\nabla f(x)) = \frac{1}{\beta} \nabla^2 f(x) \nabla f(x) \\
+& \implies   k_2 ^T \frac{1}{\beta} \nabla^2 f(x) \nabla f(x) =  \frac{1}{\beta} \nabla f(x -  \frac{1}{\beta}\nabla f(x))  \nabla^2 f(x) \nabla f(x) \\
+ &\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad  \quad = \frac{1}{\beta} \nabla f(x)^T \nabla f(x) - \frac{1}{\beta^2} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+Let $\Delta x = \frac{1}{2\beta}(k_1 + k_2) $, then using \eqref{heunIneq1} we get that:
+\begin{equation}
+\begin{aligned}
+f(x - \Delta x) - f(x) &\leq \nabla f(x)^T ( - \Delta x) + \frac{\beta}{2}|| \Delta x||_2^2 \\
+& = - \frac{1}{2\beta}\nabla f(x)^T (k_1 + k_2) + \frac{1}{8\beta}||k_1 + k_2 ||_2^2 \\
+& = - \frac{1}{2\beta}\nabla ||f(x)||_2^2 - \frac{1}{2\beta}\nabla f(x)^T k_2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 + \frac{1}{2\beta}k_1^T k_2 \\
+& = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 \\
+& = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta^2}||\nabla^2 f(x) \nabla f(x)||_2^2 \\
+& \leq - \frac{1}{8\beta}|| \nabla f(x)||_2^2
+\end{aligned}
+\end{equation}
+
+\subsection{Order Of Convergence}
+\begin{proof}
+Let $r_k = || x_k - x^* ||$, the note that
+\begin{equation}
+\begin{aligned}
+x_{k+1} - x^* &= x_{k} - x^* - \frac{1}{2\beta} \big( \nabla f(x_k) + \nabla f(x_k - \frac{1}{\beta} \nabla f(x_k))  \big)\\
+ &= x_{k} - x^* - \frac{1}{2\beta} \big( \nabla f(x_k) - \nabla f(x^*) \big) - \frac{1}{2\beta} \big( \nabla f(x_k - \frac{1}{\beta} \nabla f(x_k)) - \nabla f(x^*) \big) \\
+ &= x_{k} - x^* - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(x_k - x^*)(x_k - x^*)dt \\
+& \quad \quad \quad \quad - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(x_k - x^* - \frac{1}{\beta} \nabla f(x_k) )(x_k - x^* - \frac{1}{\beta} \nabla f(x_k))dt \\
+\end{aligned}
+\end{equation}
+Now, let $z_k = x_k - x^*$, then note that
+\begin{equation}
+\begin{aligned}
+y_{k+1} &= y_k - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k)y_kdt - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k))(y_k - \frac{1}{\beta} \nabla f(x_k))dt \\
+&= \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) y_k \\
+& \quad \quad \quad \quad  + \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) \frac{1}{\beta} \nabla f(x_k) dt \\
+&= \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) y_k \\
+& \quad \quad \quad \quad  + \frac{1}{2\beta^2} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) ( \nabla f(x_k)  - \nabla f(x^*) )dt
+\end{aligned}
+\end{equation}
+Now, define the following operators:
+\begin{equation}
+\begin{aligned}
+H_k &=  \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) \\
+G_k &= \frac{1}{2\beta^2} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt
+\end{aligned}
+\end{equation}
+Then note that as $f \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}( \mathbb{R}^n) $,
+\begin{align} \label{ineq4}
+|| \nabla^2 f(x) || \leq \beta \\
+|| \nabla f(x) || = || \nabla f(x) - \nabla f(x^*) ||& \leq  \beta || x - x^* ||  \label{ineq5}
+\end{align}
+Now, using \eqref{ineq4} and \eqref{ineq5}, we have:
+\begin{equation}
+\begin{aligned}
+|| G_k ( \nabla f(x_k)  - \nabla f(x^*) ) || &\leq || G_k ||* ||  \nabla f(x_k)  - \nabla f(x^* )|| \\
+& \leq  \frac{1}{2\beta^2} \int_0^1 || \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) || * ||  \nabla f(x_k)  - \nabla f(x^*) ||  dt \\
+& \leq \frac{1}{2 \beta^2} \int_{0}^1 \beta^2 || x_k -  x^* || dt =\frac{1}{2} || x_k - x^* ||  = \frac{1}{2} r_k
+\end{aligned}
+\end{equation}
+Note that if $|| x -y || = r$, then for $f \in C_{\beta}^{2,2}( \mathbb{R}^n)$,
+\begin{equation}
+ \nabla^2 f(x) - \beta r I \preceq  \nabla^2 f(y) \preceq \nabla^2 f(x) + \beta r I
+\end{equation}
+And, a similar inequality can be derived for $H_k$, and assuming that $l I \preceq \nabla^2 f(x^*)$
+\begin{equation}
+\begin{aligned}
+ H_k &= I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \\
+ & \leq I + \frac{1}{\beta} \nabla^2 f(x^*) - \frac{1}{2 \beta}   \int_0^1 \nabla^2 f(x^* + ty_k) -  \nabla^2 f(x^*) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) -  \nabla^2 f(x^*) dt \\
+ ||H_k ||&  \leq || I + \frac{1}{\beta}\nabla^2 f(x^*) || + \frac{1}{2\beta} \int_0^1 || ty_k || dt  + \frac{1}{2\beta} \int_0^1 || t y_k - \frac{t}{\beta} \nabla f(x_k))  || dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 || t y_k - \frac{t}{\beta} \nabla f(x_k))  || dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 t || y_k - \frac{1}{\beta} \nabla f(x_k))  || dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 || t y_k || dt   \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{2 \beta} \\
+ & \leq \frac{1}{\beta}  \lambda_{\max}(\nabla^2 f) + 1 + \frac{r_k}{4\beta}
+\end{aligned}
+\end{equation}
+
+Using, the above inequalities we get:
+\begin{equation}
+\begin{aligned}
+y_{k+1} &= H_k y_k + G_k \\
+r_{k+1} & \leq  ||H_k|| r_k + ||G_k|| \\
+& \leq \big(\frac{1}{\beta} \lambda_{\max}(\nabla^2 f) + \frac{3}{2} \big)r_k + \frac{r_k^2}{4\beta} \\
+r_{k+1} & \leq \mu_1 r_k + \mu_2 r_k^2
+\end{aligned}
+\end{equation}
+\end{proof}

@@ -1,0 +1,92 @@
+%!TEX root=./optim_report.tex
+\subsection{RK2-Ralston Proofs}
+
+\begin{proof}(Lemma 1)
+Let $\Delta x =  \frac{1}{4\beta}(k_1 + 3k_2)$, then
+\begin{equation}
+\begin{aligned}\label{ineq0}
+f(x - \Delta x) - f(x) &\leq \nabla f(x)^T (x - \Delta x - x) + \frac{\beta}{2} || x - x - \Delta x ||^2 \\
+&= -  \nabla f(x)^T ( \Delta x) + \frac{1}{32 \beta} || \Delta x ||^2 \\
+&= -\frac{1}{4 \beta} \nabla  f(x)^T ( k_1 + 3k_2) + \frac{1}{32 \beta} || \Delta x ||^2 \\
+&= -\frac{1}{4\beta}\nabla f(x)^T k_1 - \frac{3}{4\beta}\nabla f(x)^T k_2 + \frac{1}{32 \beta} || k_1 ||_2^2 + \frac{9}{32 \beta} || k_2 ||^2_2 + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{1}{4\beta}\nabla f(x)^T k_1 +  \frac{1}{32 \beta} || k_1 ||_2^2 -  \frac{3}{4\beta}\nabla f(x)^T k_2 +  + \frac{9}{32 \beta} || k_2 ||^2_2  + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 -\frac{1}{32 \beta}k_2^T(24 \nabla f(x) - 9 k_2) + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{24}{32 \beta}k_2^Tk_1 + \frac{6}{32 \beta}\left\langle k_1, k_2 \right\rangle + \frac{9}{32\beta}|| k_2 ||_2^2 \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{18}{32 \beta} \left\langle k_1, k_2 \right\rangle + \frac{9}{32 \beta}|| k_2 ||_2^2
+\end{aligned}
+\end{equation}
+
+Now, using a Taylor Series approximation for $\nabla f \big( x - \frac{2}{3\beta}k_1 \big)$, we get that,
+\begin{equation}
+\begin{aligned}\label{ineq1}
+\nabla f \big( x - \frac{2}{3\beta}k_1 \big) &= \nabla f(x) - \frac{2}{3\beta} \nabla^2 f(x) \nabla f(x) + \mathcal{O}( |\frac{2}{3\beta} |^2 ) \\
+\implies  k_2^Tk_1 &= \nabla f \big( x - \frac{2}{3\beta}k_1 \big)^T\nabla f(x) \\
+ &= \nabla f \big( x - \frac{2}{3\beta}\nabla f(x) \big)^T \nabla f(x) \\
+&= || \nabla f(x) ||_2^2 - \frac{2}{3 \beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+And, using \eqref{ineq1},
+\begin{equation}
+\begin{aligned} \label{ineq2}
+|| k_2 ||_2^2 &= ||  \nabla f(x) - \frac{2}{3\beta} \nabla^2 f(x) \nabla f(x)  ||_2^2   \\
+&= || \nabla f(x)||_2^2 + \frac{4}{9\beta}||\nabla^2 f(x) \nabla f(x)  ||_2^2 - \frac{4}{3\beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+Hence, using \eqref{ineq1} and \eqref{ineq2}
+\begin{align*}
+f(x - \Delta x) - f(x) & \leq  -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{18}{32 \beta} \left\langle k_1, k_2 \right\rangle + \frac{9}{32 \beta}|| k_2 ||_2^2 \\
+&= -\frac{7}{32 \beta}|| \nabla f(x) ||_2^2 -  \frac{18}{32 \beta} || \nabla f(x) ||_2^2 + \frac{12}{32 \beta^2} \nabla f(x)^T \nabla^2 f(x) \nabla f(x) \\
+&+  \frac{9}{32\beta}( || \nabla f(x)||_2^2 + \frac{4}{9\beta}||\nabla^2 f(x) \nabla f(x)  ||_2^2 - \frac{4}{3\beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x) )  \\
+&= -\frac{16}{32 \beta}|| \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+&= -\frac{1}{2\beta} || \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+\end{align*}
+Using the lipschitz property of the Hessian of $f$, $||\nabla^2 f(x) u - \nabla^2 f(x) v||_2^2 \leq \beta || u-v ||_2^2 $, we get that,
+\begin{equation}
+\begin{aligned}
+f(x - \Delta x) - f(x) & \leq -\frac{1}{2\beta} || \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+& \leq -\frac{4}{8\beta}|| \nabla f(x) ||_2^2 + \frac{\beta}{8 \beta^2}|| \nabla f(x) ||_2^2 \\
+& = -\big( \frac{4}{8\beta} - \frac{\beta}{8\beta^2}   \big)  || \nabla f(x) ||_2^2  \\
+&= -\frac{3}{8\beta} || \nabla f(x) ||_2^2
+\end{aligned}
+\end{equation}
+\end{proof}
+\begin{proof}(Theorem 1)
+Using Lemma 1, we have $f(x_{t+1}) - f(x) \leq -\frac{3}{8\beta}|| \nabla f(x) ||_2^2 $. Now, let $\delta_t = f(x_t) - f(x^*)$, then note that:
+\begin{align*}
+\delta_{t+1} \leq \delta_t - \frac{3}{8\beta}|| \nabla f(x) ||_2^2
+\end{align*}
+Now, by convexity of $f(x)$ we have:
+\begin{align}
+\delta_t &\leq \nabla f(x_t)^T (x_t - x^*) \\
+ &\leq || x_t - x^* ||_2 * || \nabla f(x_t) ||_2 \\
+\frac{1}{|| x_t - x^* || }\delta_t^2 & \leq  || \nabla f(x_t) ||_2^2 \\
+\end{align}
+
+Now, note that $|| x_t - x^*||_2^2$ is decreasing, using the following
+\begin{align*}
+\big( \nabla f(x) - \nabla f(y)  \big)^T(x-y)  \geq \frac{1}{\beta} || \nabla f(x) - \nabla f(y) ||_2^2
+\end{align*}
+Using the above and the fact that $\nabla f(x^*) = 0$,
+\begin{align*}
+|| x_{t+1} - x^* ||_2^2 &= || x_t - \Delta x_t - x^* ||_2^2 \\
+&= || x_t - x^* ||_2^2 + || \Delta x_t ||_2^2 - 2 \Delta x_t^T(x_t - x^*) \\
+&= || x_t - x^* ||_2^2 - \frac{1}{2\beta}(k_1 + 3k_2)^T (x_t - x^*) + \frac{1}{16 \beta^2}|| k_1 + 3k_2 ||_2^2 \\
+&= || x_t - x^* ||_2^2 - \frac{1}{2 \beta}k_1^T (x_t - x^*) + \frac{1}{16 \beta^2}|| k_1 ||_2^2  \\
+& \quad \quad \quad - \frac{3}{2\beta}k_2^T (x_t - x^*) + \frac{9}{16 \beta^2}|| k_2 ||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 - \frac{4}{16 \beta^2}||k_1 ||_2^2 + \frac{1}{16 \beta^2}|| k_1 ||_2^2  \\
+& \quad \quad \quad - \frac{12}{16 \beta^2}|k_2||_2^2 + \frac{9}{16 \beta^2}|| k_2 ||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 - \frac{3}{16 \beta^2}||k_1||_2^2 - \frac{3}{16 \beta^2}||k_2||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 -  \frac{3}{16 \beta^2}|| k_1 - k_2||_2^2  \\
+& \leq || x_t - x^* ||_2^2
+\end{align*}
+We will show that,
+\begin{align}
+\delta_{t+1} \leq \delta_t - \frac{3}{ 8 \beta || x_1 - x^* ||_2^2} \delta_t^2
+\end{align}
+Now, let $\omega = \frac{3}{8 \beta   || x_1 - x^* ||_2^2}$, then note that: (Proof in Bubek page - 269)
+\begin{align*}
+& \frac{1}{\delta_t} \geq \omega (t-1) \\
+\implies & f(x_t) - f(x^*) \leq \frac{8}{3 \beta} \frac{ || x_1 - x^* ||_2^2}{t-1} \xrightarrow{t \to \infty} 0
+\end{align*}
+\end{proof}
+

@@ -1,0 +1,342 @@
+\documentclass[12pt,twoside]{article}
+\date{}   %uncommenting this erases the date
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{natbib}
+\usepackage{verbatim}
+\usepackage{floatpag}
+\usepackage{subeqnarray}
+\usepackage{mathrsfs}    %for special characters
+\usepackage{cancel}  % to set terms in an equation to zero
+
+\usepackage{hyperref}
+
+\usepackage{amsthm}
+
+% \setlength{\textheight}     {9.0in}
+% \setlength{\textwidth}      {6.5in}
+% \setlength{\oddsidemargin}  {0.0in}
+% \setlength{\evensidemargin} {0.0in}
+% \setlength{\topmargin}      {0.0in}
+% \setlength{\headheight}     {0.0in}
+% \setlength{\headsep}        {0.0in}
+% \setlength{\hoffset}        {0.0in}
+% \setlength{\voffset}        {0.0in}
+% \setlength{\parindent}      {0.0in}      %starting new line at extreme left
+
+\graphicspath{{Figures/}}
+
+\usepackage[utf8]{inputenc}
+\usepackage{subfiles}
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{thm}{Theorem}
+\newtheorem{prop}{Proposition}
+
+\usepackage{bbm}
+
+\usepackage{algorithmic}
+
+\begin{document}
+
+\title{Runge Kutta Optimizers}
+
+\author{Raghav K. Singhal}
+
+\maketitle
+
+\section{Introduction}
+In this paper we present a new optimization method, which is based on the idea that Gradient Descent is a Euler Approximation to the solution of the following Ordinary Differential Equation:
+\begin{equation}\label{gradFlow}
+\dot{x}_t = -\nabla_{x}f(x_t)
+\end{equation}
+The Euler Approximation to this Ordinary Differential Equation is of the following form:
+\begin{align*}
+x_{n+1} =  x_n - \alpha \nabla_{x}f(x_n)
+\end{align*}
+where $\alpha$ is the step-size which is the learning rate for optimization.
+\\
+\\
+$\textbf{Look up Literature for continuous gradient descent}$
+\\
+\\
+We explore the idea that the solution trajectory for \eqref{gradFlow}, which also has the critical points of the loss function $L(\theta)$ as its $\omega$-limit point.
+
+\section{ODE Ideas - Lyupanov Function}
+Here we provdide certain properties of the solution of \eqref{gradFlow}, when $f \in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, that is $f$ is strongly convex and twice differentiable with $|| \nabla f(x) - \nabla f(y) || \leq \beta ||x - y||$, for all $x,y \in \mathbb{R}^n$.
+\begin{equation}
+\begin{aligned}
+\frac{d}{dt}\big(f(x_t) - f(x^*) \big) &= \left\langle \nabla f(x_t), \dot{x}_t \right\rangle \\
+& = - ||\nabla f(x_t)||_2^2
+\end{aligned}
+\end{equation}
+Now, note that $|| \nabla f(x) || \leq \beta || x - x^* ||$, which implies that
+\begin{equation}
+\begin{aligned}
+- \beta^2 || x_t - x^* || \leq -||\nabla f(x_t)||_2^2 = \frac{d}{dt}\big(f(x_t) -f(x^*)\big) \\
+\frac{d}{dt} \big(f(x_t) - f(x^*) \big) \geq \beta || x_t - x^* ||_2^2
+\end{aligned}
+\end{equation}
+But, as $f(x_t)\in \mathcal{S}^{2,1}_{\mu,\beta}(\mathbb{R}^n)$, we have that:
+\begin{equation}
+\begin{aligned}
+f(x) - f(x^*) \leq \frac{1}{2\mu}|| \nabla f(x)||_2^2
+\end{aligned}
+\end{equation}
+Hence,
+\begin{equation}
+\begin{aligned}
+& \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \leq -2\mu \big(f(x_t) - f(x^*)\big) \\
+\implies & \frac{d}{dt} \big(f(x_t) - f(x^*) \big) \leq e^{-2\mu t}(f(x_0) - f(x^*))
+\end{aligned}
+\end{equation}
+\section{RK2 - Ralston Method}
+
+\begin{algorithmic}
+\STATE Change this
+\FOR {$t $ in $[0,T]$ do}
+	\STATE $k_1 \gets \nabla f(x_t)$
+	\STATE $k_2 \gets \nabla f(x_t - \frac{2\alpha}{3} k_1) $
+	\STATE $x_{t+1} \gets x_n - \frac{\alpha}{4}(k_1 + 3 k_2)$
+\ENDFOR
+\end{algorithmic}
+
+\subsection{Proof 1}
+\begin{thm} Let $f(x) \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}( \mathbb{R}^n)$ and $f$ is bounded below, then the RK2-Ralston Method gap between $x_t$ and some local minima $x^*$ is given by :
+\begin{align*}
+f(x_t) - f(x^*) \leq \frac{8}{3 \beta} \frac{ || x_1 - x^* ||_2^2}{t-1}
+\end{align*}
+\end{thm}
+
+To prove the above proposition we need the following lemmas:
+\begin{lemma}
+Let $f : \mathbb{R}^d \rightarrow \mathbb{R} \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}( \mathbb{R}^n) $  . Let $\Delta x =  \frac{1}{4\beta}(k_1 + 3k_2)$ and $ y  = x - \Delta x$, then  we show that, for some $c_1= \frac{8\beta}{3} >0 $,
+\begin{align}
+f(x - \Delta x ) - f(x) \leq - \frac{3}{8 \beta} || \nabla f(x) ||^2 \\
+\end{align}
+\end{lemma}
+\begin{proof}
+Let $\Delta x =  \frac{1}{4\beta}(k_1 + 3k_2)$, then
+\begin{equation}
+\begin{aligned}\label{ineq0}
+f(x - \Delta x) - f(x) &\leq \nabla f(x)^T (x - \Delta x - x) + \frac{\beta}{2} || x - x - \Delta x ||^2 \\
+&= -  \nabla f(x)^T ( \Delta x) + \frac{1}{32 \beta} || \Delta x ||^2 \\
+&= -\frac{1}{4 \beta} \nabla  f(x)^T ( k_1 + 3k_2) + \frac{1}{32 \beta} || \Delta x ||^2 \\
+&= -\frac{1}{4\beta}\nabla f(x)^T k_1 - \frac{3}{4\beta}\nabla f(x)^T k_2 + \frac{1}{32 \beta} || k_1 ||_2^2 + \frac{9}{32 \beta} || k_2 ||^2_2 + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{1}{4\beta}\nabla f(x)^T k_1 +  \frac{1}{32 \beta} || k_1 ||_2^2 -  \frac{3}{4\beta}\nabla f(x)^T k_2 +  + \frac{9}{32 \beta} || k_2 ||^2_2  + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 -\frac{1}{32 \beta}k_2^T(24 \nabla f(x) - 9 k_2) + \frac{6}{32\beta}\left\langle k_1, k_2 \right\rangle \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{24}{32 \beta}k_2^Tk_1 + \frac{6}{32 \beta}\left\langle k_1, k_2 \right\rangle + \frac{9}{32\beta}|| k_2 ||_2^2 \\
+&= -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{18}{32 \beta} \left\langle k_1, k_2 \right\rangle + \frac{9}{32 \beta}|| k_2 ||_2^2
+\end{aligned}
+\end{equation}
+
+Now, using a Taylor Series approximation for $\nabla f \big( x - \frac{2}{3\beta}k_1 \big)$, we get that,
+\begin{equation}
+\begin{aligned}\label{ineq1}
+\nabla f \big( x - \frac{2}{3\beta}k_1 \big) &= \nabla f(x) - \frac{2}{3\beta} \nabla^2 f(x) \nabla f(x) + \mathcal{O}( |\frac{2}{3\beta} |^2 ) \\
+\implies  k_2^Tk_1 &= \nabla f \big( x - \frac{2}{3\beta}k_1 \big)^T\nabla f(x) \\
+ &= \nabla f \big( x - \frac{2}{3\beta}\nabla f(x) \big)^T \nabla f(x) \\
+&= || \nabla f(x) ||_2^2 - \frac{2}{3 \beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+And, using \eqref{ineq1},
+\begin{equation}
+\begin{aligned} \label{ineq2}
+|| k_2 ||_2^2 &= ||  \nabla f(x) - \frac{2}{3\beta} \nabla^2 f(x) \nabla f(x)  ||_2^2   \\
+&= || \nabla f(x)||_2^2 + \frac{4}{9\beta}||\nabla^2 f(x) \nabla f(x)  ||_2^2 - \frac{4}{3\beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+Hence, using \eqref{ineq1} and \eqref{ineq2}
+\begin{align*}
+f(x - \Delta x) - f(x) & \leq  -\frac{7}{32 \beta}|| k_1 ||_2^2 - \frac{18}{32 \beta} \left\langle k_1, k_2 \right\rangle + \frac{9}{32 \beta}|| k_2 ||_2^2 \\
+&= -\frac{7}{32 \beta}|| \nabla f(x) ||_2^2 -  \frac{18}{32 \beta} || \nabla f(x) ||_2^2 + \frac{12}{32 \beta^2} \nabla f(x)^T \nabla^2 f(x) \nabla f(x) \\
+&+  \frac{9}{32\beta}( || \nabla f(x)||_2^2 + \frac{4}{9\beta}||\nabla^2 f(x) \nabla f(x)  ||_2^2 - \frac{4}{3\beta} \nabla f(x)^T \nabla^2 f(x) \nabla f(x) )  \\
+&= -\frac{16}{32 \beta}|| \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+&= -\frac{1}{2\beta} || \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+\end{align*}
+Using the lipschitz property of the Hessian of $f$, $||\nabla^2 f(x) u - \nabla^2 f(x) v||_2^2 \leq \beta || u-v ||_2^2 $, we get that,
+\begin{equation}
+\begin{aligned}
+f(x - \Delta x) - f(x) & \leq -\frac{1}{2\beta} || \nabla f(x)||_2^2 + \frac{1}{8 \beta^2}||\nabla^2 f(x) \nabla f(x)  ||_2^2 \\
+& \leq -\frac{4}{8\beta}|| \nabla f(x) ||_2^2 + \frac{\beta}{8 \beta^2}|| \nabla f(x) ||_2^2 \\
+& = -\big( \frac{4}{8\beta} - \frac{\beta}{8\beta^2}   \big)  || \nabla f(x) ||_2^2  \\
+&= -\frac{3}{8\beta} || \nabla f(x) ||_2^2
+\end{aligned}
+\end{equation}
+\end{proof}
+\begin{proof}[(Theorem 1) Proof]
+Using Lemma 1, we have $f(x_{t+1}) - f(x) \leq -\frac{3}{8\beta}|| \nabla f(x) ||_2^2 $. Now, let $\delta_t = f(x_t) - f(x^*)$, then note that:
+\begin{align*}
+\delta_{t+1} \leq \delta_t - \frac{3}{8\beta}|| \nabla f(x) ||_2^2
+\end{align*}
+Now, by convexity of $f(x)$ we have:
+\begin{align}
+\delta_t &\leq \nabla f(x_t)^T (x_t - x^*) \\
+ &\leq || x_t - x^* ||_2 * || \nabla f(x_t) ||_2 \\
+\frac{1}{|| x_t - x^* || }\delta_t^2 & \leq  || \nabla f(x_t) ||_2^2 \\
+\end{align}
+
+Now, note that $|| x_t - x^*||_2^2$ is decreasing, using the following
+\begin{align*}
+\big( \nabla f(x) - \nabla f(y)  \big)^T(x-y)  \geq \frac{1}{\beta} || \nabla f(x) - \nabla f(y) ||_2^2
+\end{align*}
+Using the above and the fact that $\nabla f(x^*) = 0$,
+\begin{align*}
+|| x_{t+1} - x^* ||_2^2 &= || x_t - \Delta x_t - x^* ||_2^2 \\
+&= || x_t - x^* ||_2^2 + || \Delta x_t ||_2^2 - 2 \Delta x_t^T(x_t - x^*) \\
+&= || x_t - x^* ||_2^2 - \frac{1}{2\beta}(k_1 + 3k_2)^T (x_t - x^*) + \frac{1}{16 \beta^2}|| k_1 + 3k_2 ||_2^2 \\
+&= || x_t - x^* ||_2^2 - \frac{1}{2 \beta}k_1^T (x_t - x^*) + \frac{1}{16 \beta^2}|| k_1 ||_2^2  \\
+& \quad \quad \quad - \frac{3}{2\beta}k_2^T (x_t - x^*) + \frac{9}{16 \beta^2}|| k_2 ||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 - \frac{4}{16 \beta^2}||k_1 ||_2^2 + \frac{1}{16 \beta^2}|| k_1 ||_2^2  \\
+& \quad \quad \quad - \frac{12}{16 \beta^2}|k_2||_2^2 + \frac{9}{16 \beta^2}|| k_2 ||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 - \frac{3}{16 \beta^2}||k_1||_2^2 - \frac{3}{16 \beta^2}||k_2||_2^2 + \frac{6}{16 \beta^2} k_1 ^T k_2 \\
+&= || x_t - x^* ||_2^2 -  \frac{3}{16 \beta^2}|| k_1 - k_2||_2^2	\\
+& \leq || x_t - x^* ||_2^2
+\end{align*}
+We will show that,
+\begin{align}
+\delta_{t+1} \leq \delta_t - \frac{3}{ 8 \beta || x_1 - x^* ||_2^2} \delta_t^2
+\end{align}
+Now, let $\omega = \frac{3}{8 \beta   || x_1 - x^* ||_2^2}$, then note that: (Proof in Bubek page - 269)
+\begin{align*}
+& \frac{1}{\delta_t} \geq \omega (t-1) \\
+\implies & f(x_t) - f(x^*) \leq \frac{8}{3 \beta} \frac{ || x_1 - x^* ||_2^2}{t-1} \xrightarrow{t \to \infty} 0
+\end{align*}
+\end{proof}
+
+\subsection{Order of Convergence}
+\section{RK2 - Heun's Method}
+Heun's Method is a second order method to solving $\dot{x_t} = - \nabla f(x_t)$, and its updates are given as follows:
+\begin{algorithmic}
+\STATE Change this
+\FOR {$t $ in $[0,T]$ do}
+  \STATE $k_1 \gets \nabla f(x_t)$
+  \STATE $k_2 \gets \nabla f(x_t - \alpha k_1) $
+  \STATE $x_{t+1} \gets x_n - \frac{\alpha}{2}(k_1 + k_2)$
+\ENDFOR
+\end{algorithmic}
+\subsection{Proof 1}
+----------- \\
+\textbf{TAKE $\alpha = \frac{2}{\beta}$} \\
+-----------\\
+Note that using a Taylor Series approximation, we get that:
+\begin{equation} \label{heunIneq1}
+\begin{aligned}
+\nabla f(x -  \frac{1}{\beta}\nabla f(x)) &= \nabla f(x) - \frac{1}{\beta}\nabla^2 f(x) \nabla f(x) + \mathcal{O}(|c|^2) \\
+& \implies  \nabla f(x) - \nabla f(x-\frac{1}{\beta}\nabla f(x)) = \frac{1}{\beta} \nabla^2 f(x) \nabla f(x) \\
+& \implies   k_2 ^T \frac{1}{\beta} \nabla^2 f(x) \nabla f(x) =  \frac{1}{\beta} \nabla f(x -  \frac{1}{\beta}\nabla f(x))  \nabla^2 f(x) \nabla f(x) \\
+ &\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad  \quad = \frac{1}{\beta} \nabla f(x)^T \nabla f(x) - \frac{1}{\beta^2} \nabla f(x)^T \nabla^2 f(x) \nabla f(x)
+\end{aligned}
+\end{equation}
+Let $\Delta x = \frac{1}{2\beta}(k_1 + k_2) $, then using \eqref{heunIneq1} we get that:
+\begin{equation}
+\begin{aligned}
+f(x - \Delta x) - f(x) &\leq \nabla f(x)^T ( - \Delta x) + \frac{\beta}{2}|| \Delta x||_2^2 \\
+& = - \frac{1}{2\beta}\nabla f(x)^T (k_1 + k_2) + \frac{1}{8\beta}||k_1 + k_2 ||_2^2 \\
+& = - \frac{1}{2\beta}\nabla ||f(x)||_2^2 - \frac{1}{2\beta}\nabla f(x)^T k_2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 + \frac{1}{2\beta}k_1^T k_2 \\
+& = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 \\
+& = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta^2}||\nabla^2 f(x) \nabla f(x)||_2^2 \\
+& \leq - \frac{1}{8\beta}|| \nabla f(x)||_2^2
+\end{aligned}
+\end{equation}
+
+\subsection{Order Of Convergence}
+\begin{proof}
+Let $r_k = || x_k - x^* ||$, the note that
+\begin{equation}
+\begin{aligned}
+x_{k+1} - x^* &= x_{k} - x^* - \frac{1}{2\beta} \big( \nabla f(x_k) + \nabla f(x_k - \frac{1}{\beta} \nabla f(x_k))	 \big)\\
+ &= x_{k} - x^* - \frac{1}{2\beta} \big( \nabla f(x_k) - \nabla f(x^*) \big) - \frac{1}{2\beta} \big( \nabla f(x_k - \frac{1}{\beta} \nabla f(x_k)) - \nabla f(x^*) \big) \\
+ &= x_{k} - x^* - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(x_k - x^*)(x_k - x^*)dt \\
+& \quad \quad \quad \quad - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(x_k - x^* - \frac{1}{\beta} \nabla f(x_k) )(x_k - x^* - \frac{1}{\beta} \nabla f(x_k))dt \\
+\end{aligned}
+\end{equation}
+Now, let $z_k = x_k - x^*$, then note that
+\begin{equation}
+\begin{aligned}
+y_{k+1} &= y_k - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k)y_kdt - \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k))(y_k - \frac{1}{\beta} \nabla f(x_k))dt \\
+&= \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) y_k \\
+& \quad \quad \quad \quad  + \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) \frac{1}{\beta} \nabla f(x_k) dt \\
+&= \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) y_k \\
+& \quad \quad \quad \quad  + \frac{1}{2\beta^2} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) ( \nabla f(x_k)  - \nabla f(x^*) )dt
+\end{aligned}
+\end{equation}
+Now, define the following operators:
+\begin{equation}
+\begin{aligned}
+H_k &=  \big(I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt  \big) \\
+G_k &= \frac{1}{2\beta^2} \int_0^1 \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt
+\end{aligned}
+\end{equation}
+Then note that as $f \in C_{\beta}^{2,2}( \mathbb{R}^n) \cap  C_{\beta}^{2,1}( \mathbb{R}^n) $,
+\begin{align} \label{ineq4}
+|| \nabla^2 f(x) || \leq \beta \\
+|| \nabla f(x) || = || \nabla f(x) - \nabla f(x^*) ||& \leq  \beta || x - x^* ||  \label{ineq5}
+\end{align}
+Now, using \eqref{ineq4} and \eqref{ineq5}, we have:
+\begin{equation}
+\begin{aligned}
+|| G_k ( \nabla f(x_k)  - \nabla f(x^*) ) || &\leq || G_k ||* ||  \nabla f(x_k)  - \nabla f(x^* )|| \\
+& \leq  \frac{1}{2\beta^2} \int_0^1 || \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) || * ||  \nabla f(x_k)  - \nabla f(x^*) ||  dt \\
+& \leq \frac{1}{2 \beta^2} \int_{0}^1 \beta^2 || x_k -  x^* || dt =\frac{1}{2} || x_k - x^* ||  = \frac{1}{2}	r_k
+\end{aligned}
+\end{equation}
+Note that if $|| x -y || = r$, then for $f \in C_{\beta}^{2,2}( \mathbb{R}^n)$,
+\begin{equation}
+ \nabla^2 f(x) - \beta r I \preceq  \nabla^2 f(y) \preceq \nabla^2 f(x) + \beta r I
+\end{equation}
+And, a similar inequality can be derived for $H_k$, and assuming that $l I \preceq \nabla^2 f(x^*)$
+\begin{equation}
+\begin{aligned}
+ H_k &= I -  \frac{1}{2\beta} \int_0^1 \nabla^2 f(x^* + ty_k) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) dt 	\\
+ & \leq I + \frac{1}{\beta} \nabla^2 f(x^*) - \frac{1}{2 \beta}   \int_0^1 \nabla^2 f(x^* + ty_k) -  \nabla^2 f(x^*) + \nabla^2 f(x^* + t(y_k - \frac{1}{\beta} \nabla f(x_k)) -  \nabla^2 f(x^*) dt \\
+ ||H_k ||&  \leq || I + \frac{1}{\beta}\nabla^2 f(x^*) || + \frac{1}{2\beta} \int_0^1 || ty_k || dt	 + \frac{1}{2\beta} \int_0^1 ||	t y_k - \frac{t}{\beta} \nabla f(x_k))	|| dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 ||	t y_k - \frac{t}{\beta} \nabla f(x_k))	|| dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 t || y_k - \frac{1}{\beta} \nabla f(x_k))	|| dt \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{4 \beta} + \frac{1}{2\beta} \int_0^1 ||	t y_k || dt   \\
+ & \leq  || I + \frac{1}{\beta}\nabla^2 f(x^*) || +  \frac{r_k}{2 \beta} \\
+ & \leq \frac{1}{\beta}  \lambda_{\max}(\nabla^2 f) + 1 + \frac{r_k}{4\beta}
+\end{aligned}
+\end{equation}
+
+Using, the above inequalities we get:
+\begin{equation}
+\begin{aligned}
+y_{k+1} &= H_k y_k + G_k \\
+r_{k+1} & \leq  ||H_k|| r_k + ||G_k|| \\
+& \leq \big(\frac{1}{\beta} \lambda_{\max}(\nabla^2 f) + \frac{3}{2} \big)r_k + \frac{r_k^2}{4\beta} \\
+r_{k+1} & \leq \mu_1 r_k + \mu_2 r_k^2
+\end{aligned}
+\end{equation}
+\end{proof}
+
+\input{strongConvex}
+\section{Experiments}
+\subsection{Deep Learning}
+
+\textbf{ResNet18} -
+% Here we compare our optimization scheme with Stochastic Gradient Descent with momentum and learning rate decay.
+% \\
+% \includegraphics[scale=0.5]{cifar.png}
+% \textbf{WideResnet} -
+% Here we compare our optimization scheme, Runge-Kutta Ralston Method with Stochastic Gradient Descent.
+% \\
+% \includegraphics[scale=0.5]{wideresnet.png}
+
+\subsection{Convex Models}
+\section{Notes}
+\begin{lemma}
+Let $f : \mathbb{R}^d \rightarrow \mathbb{R}$  be convex and satisfy $|| \nabla f(x) - \nabla f(y) || \leq \beta || x -y ||$ for all $x,y \in \mathbb{R}^d$ . Then $\forall x,y \in \mathbb{R}^d$ the following are true:
+\begin{align}
+0 \leq f(x) - f(y) - \nabla f(y)^T (x-y) \leq \frac{\beta}{2} || x-y ||^2 \\
+f(x) - f(y) \leq \nabla f(x)^T (x-y) - \frac{1}{2 \beta} || \nabla f(x) - \nabla f(y) ||^2 \\
+\frac{1}{\beta} || \nabla f(x) - \nabla f(y) ||^2  \leq( \nabla f(x) - \nabla f(y))^T(x-y)
+\end{align}
+\end{lemma}
+\subsection{Comparison to GD}
+
+
+
+\end{document}

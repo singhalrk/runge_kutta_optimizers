@@ -1,0 +1,169 @@
+%!TEX root = main.tex
+\section{RK2 Heun}
+RK2 Heun is commonly known as a predictor-corrector algorithm. It is based on Euler's Method, where like Euler's Method it uses the tangent to the function at some point to obtain the next point, however even when the step-size or the learning rate is small, the error starts to accumulate over time, however the second step is meant to act as a corrector step. The scheme is defined as follows for the equation $\dot{x}(t) = g(x(t))$
+\begin{align*}
+k_1 &= g(x_k) \\
+k_2 &= g(x_k + \eta k1) \\
+x_{k + 1} &= x_{k} + \frac{\eta}{2} \big( k_1 + k_2 \big)
+\end{align*}
+In other words if we wish to minimize the function $f$, then RK2 heun's method scheme is defined as follows:
+\begin{equation*}
+x_{k + 1} = x_{k} - \frac{\eta}{2} (\nabla f(x_k) - \nabla f(x_k - \eta \nabla f(x_k)))
+\end{equation*}
+
+\subsection{Strongly Convex}
+\begin{theorem}
+Let $f$ be $\beta$-smooth and $\alpha$-Strongly Convex function. Then let $\eta = \frac{4}{\alpha + \beta}$.
+Then RK-2 Heun's method satisfies:
+\begin{align*}
+f(x_{k}) - f(x^{*}) \leq \frac{\beta}{2} \exp \bigg(- \frac{8 k}{ \kappa + 1} \bigg) \norm{x_{1} - x^{*}}^{2}
+\end{align*}
+where $\kappa = \frac{\beta}{\alpha}$ is the condition number.
+\end{theorem}
+\begin{proof}
+Define $r_k = \norm{x_{k} - x^{*}}$ and $F(x) = \nabla f(x) + \nabla f(x - \eta \nabla f(x)) = k_{1} + k_{2}$, then note that
+\begin{align}
+\norm{x_{k + 1} - x^{*}}^{2} &= \norm{x_{k} - x^{*} - \frac{\eta}{2}F(x_{k})}^{2} \\
+&= \norm{x_{k} - x^{*}}^{2} + \frac{\eta^{2}}{4}\norm{F(x_{k})}^{2} - \eta (x_{k} - x^{*})^{T} F(x_k) \\ \label{r}
+& \leq \norm{x_{k} - x^{*}}^{2} + \frac{\eta^{2}}{4}(\norm{k_{1}}^{2} + \norm{k_{2}}^{2} + 4 k_{1}^{T} k_{2}) - \eta (x_{k} - x^{*})^{T} F(x_k)
+\end{align}
+Now, note that for $f \in \mathcal{S}_{\beta, \alpha}(\mathbb{R}^{n})$, that is $f$ is $\beta$-smooth and $\alpha$-Strongly Convex function,
+\begin{align} \label{coercivity}
+(\nabla f(x) - \nabla f(y))^{T}(x - y) \geq \frac{\alpha \beta}{\alpha + \beta}\norm{x - y}^{2} + \frac{1}{\alpha + \beta}\norm{\nabla f(x) - \nabla f(y)}^{2}
+\end{align}
+So using \eqref{coercivity}, the inequality \eqref{r} reduces to
+
+\begin{align}
+r_{k + 1}^{2} &\leq r_{k}^{2} + \frac{\eta^{2}}{4}(\norm{k_{1}}^{2} + \norm{k_{2}}^{2}) + \eta^{2}k_{1}^{T} k_{2} - \eta (x_{k} - x^{*})^{T} (k_{1} + k_{2}) \\
+& = r_{k}^{2} + \frac{\eta^{2}}{4}(\norm{k_{1}}^{2} + \norm{k_{2}}^{2}) - \eta (x_{k} - x^{*})^{T} k_1 - \eta (x_{k} - \eta k_{1} - x^{*})^{T} k_2
+\end{align}
+Now, using \eqref{coercivity} on the last two terms yields
+
+\begin{align*}
+r_{k + 1}^{2} & \leq r_{k}^{2} + \frac{\eta^{2}}{4}(\norm{k_{1}}^{2} + \norm{k_{2}}^{2}) - \eta \frac{\alpha \beta}{\alpha + \beta}(r^{2}_k + \norm{x_{k} - \eta k_{1} - x^{*} }^{2})  \\ & \qquad \qquad \qquad \qquad -\eta \frac{1}{\alpha + \beta} (\norm{k_{1}}^{2} + \norm{k_{2}}^{2}) \text{    , using \eqref{coercivity}} \\
+&= r_{k}^{2} + \frac{\eta}{4} (\eta - \frac{4}{\alpha + \beta})(\norm{k_{1}}^{2} + \norm{k_{2}}^{2})  - \eta \frac{\alpha \beta}{\alpha + \beta}(r^{2}_k + || x_{k} - x^{*} - \eta k_{1} ||^{2}) \\
+&= r_{k}^{2}  - \eta \frac{\alpha \beta}{\alpha + \beta}(r^{2}_k + \norm{x_{k} - x^{*} - \eta k_{1}}^{2}) \text{    , since $\eta = \frac{4}{\beta + \alpha}$} \\
+& \leq r_{k}^{2} - \eta \frac{\alpha \beta}{\alpha + \beta}(r_{k}^{2} +  \norm{x_{k} - x^{*} - \eta k_{1}}^{2}) \\
+& \leq r_{k}^{2}(1 - \eta \frac{\alpha \beta}{\alpha + \beta})  -  \eta \frac{\alpha \beta}{\alpha + \beta}( \norm{x_{k} - x^{*} - \eta k_{1}}^{2})
+\end{align*}
+where the last two inequality follows as $\norm{x - y}^{2} \geq (\norm{x} - \norm{y})^{2}$ and as $\norm{\nabla f(x) - \nabla f(y)} \leq \beta \norm{x - y}$
+\begin{align}
+r_{k}^{2}&= r_{k}^{2} \bigg(1 - 4  \frac{\alpha \beta}{(\alpha + \beta)^{2}} \bigg) -  4  \frac{\alpha \beta}{(\alpha + \beta)^{2}}( \norm{x_{k} - x^{*} - \eta k_{1}}^{2})  \\
+& \leq r_{k}^{2} \bigg(\frac{\beta - \alpha}{\beta + \alpha}\bigg)^{2} -  4  \frac{\alpha \beta}{(\alpha + \beta)^{2}}( \norm{x_{k} - x^{*} - \eta k_{1}}^{2})  \\
+&= \bigg(\frac{\kappa - 1}{\kappa + 1}\bigg)^{2} r_{k}^{2} -  4  \frac{\alpha \beta}{(\alpha + \beta)^{2}}( \norm{x_{k} - x^{*} - \eta k_{1}}^{2}) \\
+r^{2}_{k + 1} &\leq \exp \bigg(- \frac{8 k}{ \kappa + 1} \bigg) \norm{x_{1} - x^{*}}^{2}
+\end{align}
+where $\kappa = \frac{\beta}{\alpha}$ is known as the condition number of $f$.
+\end{proof}
+
+% Note as $f$ is $\alpha$-Strongly Convex and $\beta$-smooth, we know that $ \beta I \succeq \nabla^{2}f(x) \succeq \alpha I$, then by Taylor Series's approximation
+% \begin{align*}
+% k_{1}^{T} k_{2} & \sim \norm{\nabla f(x_{k})}^{2} - \eta \nabla f(x_{k})^{T} \nabla^{2} f(x_{k}) \nabla f(x_{k}) \\
+% & = \norm{\nabla f(x_{k})}^{2} - \frac{4}{\alpha + \beta} \nabla f(x_{k})^{T} \nabla^{2} f(x_{k}) \nabla f(x_{k}) \geq 0
+% \end{align*}
+
+% \textbf{Impose the above condition in the theorem}
+
+
+\subsection{Convex}
+\begin{theorem} \label{rk2_heun_convex}
+Let $f : \mathbb{R}^{n} \rightarrow \mathbb{R}^{n} $ be convex and $\beta$-smooth, then with $\eta = \frac{1}{\beta}$, RK2-Heun satisfies:
+\begin{align*}
+f(x_{k}) - f(x^{*}) \leq  \frac{2}{3 \beta} \frac{\norm{x_{1} - x^{*}}^{2}}{k - 1}
+\end{align*}
+\end{theorem}
+
+\begin{lemma} \label{rk2_heun_convex_lemma}
+Let $f : \mathbb{R}^{n} \rightarrow \mathbb{R}^{n} $ be convex and $\beta$-smooth, then with $\eta = \frac{1}{\beta}$, RK2-Heun satisfies:
+\begin{align}
+f(x_{k + 1}) \leq f(x_{k}) - \frac{3}{2 \beta } \norm{\nabla f(x_k)}^{2}
+\end{align}
+\end{lemma}
+
+The Proof for Theorem \ref{rk2_heun_convex} follows the same steps as the proof for Rk2 Ralston convex case.
+% \begin{proof}(Lemma \ref{rk2 heun convex lemma})
+% % Let $\Delta x = \frac{1}{2\beta}(k_1 + k_2) $, then using Taylor Series approximation we get that:
+% % \begin{equation}
+% % \begin{aligned}
+% % f(x - \Delta x) - f(x) &\leq \nabla f(x)^T ( - \Delta x) + \frac{\beta}{2}|| \Delta x||_2^2 \\
+% % & = - \frac{1}{2\beta}\nabla f(x)^T (k_1 + k_2) + \frac{1}{8\beta}||k_1 + k_2 ||_2^2 \\
+% % & = - \frac{1}{2\beta}\nabla ||f(x)||_2^2 - \frac{1}{2\beta}\nabla f(x)^T k_2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 + \frac{1}{2\beta}k_1^T k_2 \\
+% % & = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||k_2||_2^2 \\
+% % & = -\frac{3}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta}||\nabla f(x)||_2^2 + \frac{1}{8\beta^2}||\nabla^2 f(x) \nabla f(x)||_2^2 \\
+% % & \leq - \frac{1}{8\beta}|| \nabla f(x)||_2^2
+% % \end{aligned}
+% % \end{equation}
+% Let $\Delta x = \frac{1}{2 \beta}(k_1 + k_2) $, then using Taylor Series approximation we get that:
+
+% \begin{equation}
+% \begin{aligned}
+% f(x - \Delta x) - f(x) &\leq \nabla f(x)^T ( - \Delta x) + \frac{\beta}{2}|| \Delta x||_2^2 \\
+% & = - \frac{1}{\beta}\nabla f(x)^T (k_1 + k_2) + \frac{1}{2\beta}||k_1 + k_2 ||_2^2 \\
+% & = - \frac{1}{\beta}\nabla ||f(x)||_2^2 - \frac{1}{\beta}\nabla f(x)^T k_2 + \frac{1}{2\beta}||\nabla f(x)||_2^2 + \frac{1}{2\beta}||k_2||_2^2 + \frac{1}{\beta}k_1^T k_2 \\
+% & \leq -\frac{1}{2\beta}||\nabla f(x)||_2^2 + \frac{1}{\beta}||k_2||_2^2 \\
+% & = -\frac{1}{2\beta}||\nabla f(x)||_2^2 + \frac{1}{\beta}||\nabla f(x)||_2^2 + \frac{4}{\beta^2}||\nabla^2 f(x) \nabla f(x)||_2^2 \\
+% & \leq - \frac{3}{2\beta}|| \nabla f(x)||_2^2
+% \end{aligned}
+% \end{equation}
+
+% \end{proof}
+
+
+% \begin{proof}
+% Note that as $f$ is convex and $\beta$-smooth, it satisfies the following
+% \begin{align} \label{convex_def}
+% 0 \leq f(x) - f(y) \leq \nabla f(y)^{T} (x - y) + \frac{\beta}{2}\norm{x - y}^{2}
+% \end{align}
+% Now, a consequence of equation \eqref{convex_def} is that
+% \begin{align} \label{convex_def_2}
+% f(x) - f(y) \leq \nabla f(x)^{T}(x - y) - \frac{1}{2 \beta} \norm{\nabla f(x) - \nabla f(y)}^{2}
+% \end{align}
+% % Then note that
+% % \begin{align}
+% % f(x_{k}) - f(x^{*})
+% % \end{align}
+
+% Then using \eqref{convex_def} and \eqref{convex_def_2} we show that
+% \begin{align*}
+% f(x_{k + 1}) - f(x_{k}) & \leq \nabla f(x_{k})^{T} (x_{k + 1} - x_{k}) + \frac{\beta}{2}\norm{x_{k + 1} - x_{k}}^{2} \\
+% & = -\frac{\eta}{2} \nabla f(x_{k})^{T}(k_{1} + k_{2}) + \frac{\eta^{2} \beta}{8} \norm{k_{1} + k_{2}}^{2} \\
+% & = - \frac{\eta}{2} ( \norm{k_{1}}^{2} + k_{1}^{T} k_{2}) + \frac{\eta^{2} \beta}{8} ( \norm{k_{1}}^{2} + 2 k_{1}^{T} k_{2} +\norm{k_{2}}^{2})
+% \end{align*}
+% Now, let $\delta_{k} = f(x_{k}) - f(x^{*})$, then note that
+% \begin{align*}
+% %  % Use \\
+% \norm{x + y}^{2} &\leq 2 \norm{x}^{2} +  2 \norm{y}^{2} \\
+% &\text{Use in last equation to get rid of $k_{1}^{T} k_{2}$}
+% \end{align*}
+
+% \begin{align}
+% \delta_{k + 1} & \leq \delta_{k} - \frac{\eta}{2} ( \norm{k_{1}}^{2} + k_{1}^{T} k_{2}) + \frac{\eta^{2} \beta}{8} ( \norm{k_{1}}^{2} + 2 k_{1}^{T} k_{2} +\norm{k_{2}}^{2}) \\
+% & = \delta_{k} - \frac{\eta}{2}(1 - \frac{\eta \beta}{4})\norm{k_{1}}^{2} - \frac{\eta}{2} k_{1}^{T} k_{2}(1 - \frac{\eta \beta}{2}) + \frac{\eta^{2} \beta}{8} \norm{k_{2}}^{2} \\ \label{last_rk2_convex}
+% & = \delta_{k} - \frac{3}{8 \beta} \norm{k_{1}}^{2} - \frac{2}{8 \beta} k_{1}^{T} k_{2} + \frac{1}{8 \beta} \norm{k_{2}}^{2}
+% \end{align}
+
+% For the last two terms in \eqref{last_rk2_convex}, we have that
+% \begin{align*}
+% k_{1}^{T} k_{2} &= \norm{\nabla f(x_{k})}^{2} - \frac{1}{\beta} \nabla f(x_{k})^{T} \nabla f(x_{k})^{2} \nabla f(x_{k}) \\
+% &= \norm{k_{1}}^{2} - \frac{1}{\beta}k_{1} \nabla^{2} f(x_{k}) k_{1} \\
+% \norm{k_{2}}^{2} &= \norm{\nabla f(x_{k}) - \frac{1}{\beta}\nabla f(x_{k})^{2} \nabla f(x_{k})}^{2} \\
+% & = \norm{k_{1}}^{2} + \frac{1}{\beta^{2}}\norm{\nabla f(x_{k})^{2} k_{1}} - \frac{2}{\beta}k_{1} \nabla^{2} f(x_{k}) k_{1}
+% \end{align*}
+% therefore, using the above two, equation \eqref{last_rk2_convex} becomes
+% \begin{align*}
+% \delta_{k + 1} & \leq \delta_{k} - \frac{3}{8 \beta}\norm{k_{1}}^{2} - \frac{1}{8 \beta}\bigg( \norm{k_{1}}^{2} + \frac{1}{\beta}k_{1} \nabla^{2} f(x_{k}) k_{1} - \frac{1}{\beta^{2}} \norm{\nabla^{2} f(x_{k}) k_{1}) }^{2} \bigg) \\
+% & = \delta_{k} - \frac{1}{2 \beta}\norm{k_{1}}^{2} - \frac{1}{8 \beta^{2}}\bigg( k_{1} \nabla^{2} f(x_{k}) k_{1} - \frac{1}{\beta} \norm{\nabla^{2} f(x_{k}) k_{1} }^{2} \bigg)
+% \end{align*}
+
+% \end{proof}
+% % Note that for $f(x) = \frac{1}{2} x^{T} A x$, where $A$ is positive semi-definite, $ k_{1}^{T} k_{2} =\nabla f(x)^{T} \nabla f(x - \eta \nabla f(x)) \geq 0$ (\textbf{prove using Taylor Series somewhere}), something like this (also use $\norm{ \nabla f(x)}^{2} \leq \beta \norm{x}^{2}$)
+% % \begin{align*}
+% % k_{1}^{T} k_{2} \sim = \norm{\nabla f(x)}^{2} - \frac{1}{\beta}\nabla f(x)^{T} \nabla^{2} f(x) \nabla f(x) \geq 0
+% % \end{align*}
+
+% \subsection{Stochastic -  Strongly Convex}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

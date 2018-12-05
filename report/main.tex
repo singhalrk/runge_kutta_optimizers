@@ -1,0 +1,89 @@
+\documentclass[12pt,twoside]{article}
+%\date{}   %uncommenting this erases the date
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[square,sort,comma,numbers]{natbib}
+
+\usepackage{verbatim}
+\usepackage{floatpag}
+\usepackage{subeqnarray}
+\usepackage{mathrsfs}    %for special characters
+\usepackage{cancel}  % to set terms in an equation to zero
+
+
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+
+\usepackage{hyperref}
+\usepackage{wrapfig}
+
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{prop}{Proposition}
+
+
+\setlength{\textheight}     {9.0in}
+\setlength{\textwidth}      {6.5in}
+\setlength{\oddsidemargin}  {0.0in}
+\setlength{\evensidemargin} {0.0in}
+\setlength{\topmargin}      {0.0in}
+\setlength{\headheight}     {0.0in}
+\setlength{\headsep}        {0.0in}
+\setlength{\hoffset}        {0.0in}
+\setlength{\voffset}        {0.0in}
+\setlength{\parindent}      {0.0in}      %starting new line at extreme left
+
+\graphicspath{{Figures/}}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\usepackage{bbm}
+
+
+\linespread{2}
+\usepackage{times}
+
+\newcommand{\signaturerule}{\rule{10em}{.4pt}}
+\renewcommand{\arraystretch}{1.5}
+
+\begin{document}
+
+\title{Runge Kutta Optimizers}
+\author{Raghav Singhal}
+\maketitle
+
+\begin{abstract}
+We investigate a link between the most commonly used optimization
+scheme, Gradient-Descent, and a well known equation, the Gradient
+Flow. Using this analogy we establish a link between Optimization
+and Numerical Integration of the Gradient Flow Equation, and we
+then use this analogy to investigate Runge-Kutta Methods as
+optimization schemes.
+\end{abstract}
+
+\input{introduction}
+\input{grad_flow}
+\input{integration}
+\input{rk2Ralston}
+\input{rk2_heun}
+\input{deep_learning}
+
+% \input{properties}
+
+% \input{appendix}
+
+\input{biblio}
+
+\input{experiments}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

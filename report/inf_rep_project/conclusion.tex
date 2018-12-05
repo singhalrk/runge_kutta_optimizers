@@ -1,0 +1,10 @@
+%!TEX root=./optim_report.tex
+
+\section{Conclusion and Further Work}
+In this work we have provided theoretical proofs and experimental justification for these methods to be studied further. Our proofs do not exactly explain the behaviour we observe in the experiments, primarily how does the training loss decrease much faster than Stochastic Gradient Descent.
+\\
+\\
+One of the most interesting questions that has arisen from this study for us is under what circumstances should we choose a particular optimizer. Optimization in Deep Learning is a double-edged sword as not only is non-convex but with certain activation functions, it is not even smooth. Hence, we propose to understand Optimization in Non-Convex settings through a similar analysis applied to the Integration Schemes for Ordinary Differential Equations.
+\\
+\\
+Another interesting consequence of this study and of \cite{alex2017}, is to see if optimization techniques under convex settings can lead to faster solver for Ordinary Differential Equations.
